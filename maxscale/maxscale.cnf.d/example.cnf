@@ -1,18 +1,12 @@
 [server1]
 type=server
-address=master
+address=master1
 port=3306
 protocol=MariaDBBackend
 
 [server2]
 type=server
-address=slave1
-port=3306
-protocol=MariaDBBackend
-
-[server3]
-type=server
-address=slave2
+address=master2
 port=3306
 protocol=MariaDBBackend
 
@@ -24,12 +18,11 @@ protocol=MariaDBBackend
 [MariaDB-Monitor]
 type=monitor
 module=mariadbmon
-servers=server1,server2,server3
+servers=server1,server2
 user=maxuser
 password=maxpwd
 auto_failover=true
 auto_rejoin=true
-enforce_read_only_slaves=1
 
 # Service definitions
 # Service Definition for a read-only service and a read/write splitting service.
@@ -40,10 +33,9 @@ enforce_read_only_slaves=1
 [Read-Only-Service]
 type=service
 router=readconnroute
-servers=server1,server2,server3
+servers=server1,server2
 user=maxuser
 password=maxpwd
-router_options=slave
 
 # ReadWriteSplit documentation:
 # https://github.com/mariadb-corporation/MaxScale/blob/2.3/Documentation/Routers/ReadWriteSplit.md
@@ -51,7 +43,7 @@ router_options=slave
 [Read-Write-Service]
 type=service
 router=readwritesplit
-servers=server1,server2,server3
+servers=server1,server2
 user=maxuser
 password=maxpwd
 master_failure_mode=fail_on_write
