@@ -81,9 +81,9 @@ Once complete, to remove the cluster and maxscale containers:
 docker-compose down -v
 ```
 
-# Changes made to convert from master-slave to sharded
+# Configuration
 
-## Changes made to your docker-compose.yml file
+## Configurations made to your docker-compose.yml file
 Open your docker-compose.yml file. 
 Change the first service under services from:
 ```
@@ -223,13 +223,14 @@ services:
 ```
 
 Next you will need to rename the folders containing your sql.
-These are located at: ```/maxscale/sql``` at are named "master" and "slave" by default.
+These are located at: ```/maxscale/sql``` are named "master" and "slave" by default.
 You will want to rename these to "server1" and "server2".
 
-## Changes made to your example.cnf file
+## Configuration of your example.cnf file
 Navigate to your example.cnf file located at ```/maxscale/maxscale.cnf.d/example.cnf```
 Change the address under server1 to ```address=server1``` and the address under server2 to ```address=server2```
 Remove server3, it will not be needed.
+
 Change MariaDB-Monitor from:
 ```
 [MariaDB-Monitor]
@@ -393,5 +394,11 @@ service=Read-Write-Service
 protocol=MariaDBClient
 port=4006
 ```
+
+## Connecting to MariaDB
+To connect to MariaDB, use the command ```mariadb -umaxuser -pmaxpwd -h 127.0.0.1 -P 4000```
+To import a database, use the command ```source``` followed by the path to your sql file.
+For example, my command was ```source /home/masonjones103/sql-files/shard1/shard1.sql```
+To confirm the data has been imported correctly, you can use the command ```show databases;```
 
 
