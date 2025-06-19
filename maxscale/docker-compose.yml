@@ -5,7 +5,7 @@ services:
         environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: 'Y'
         volumes:
-            - ./sql/master:/docker-entrypoint-initdb.d
+            - ./sql/server1:/docker-entrypoint-initdb.d
         command: mysqld --log-bin=mariadb-bin --binlog-format=ROW --server-id=3000
         ports:
             - "4001:3306"
@@ -15,7 +15,7 @@ services:
         environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: 'Y'
         volumes:
-            - ./sql/master:/docker-entrypoint-initdb.d
+            - ./sql/server2:/docker-entrypoint-initdb.d
         command: mysqld --log-bin=mariadb-bin --binlog-format=ROW --server-id=3001
         ports:
             - "4002:3306"
@@ -28,6 +28,8 @@ services:
         volumes:
             - ./maxscale.cnf.d:/etc/maxscale.cnf.d
         ports:
+            - "4000:4000"  # sharded port
             - "4006:4006"  # readwrite port
             - "4008:4008"  # readonly port
             - "8989:8989"  # REST API port
+
