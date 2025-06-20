@@ -5,7 +5,7 @@ This readme will help you make the necessary edits to convert your server with o
 # Configuration
 
 ## Changes made to your docker-compose.yml file
-Open your docker-compose.yml file. 
+Open your docker-compose.yml file located at ```/maxscale/docker-compose.yml```
 
 Change the first service under services from:
 ```
