@@ -1,18 +1,18 @@
 # Changing a MariaDB master-slave server to a sharded using Maxscale in Docker-compose
 
 ## Running
-The MaxScale docker-compose setup contains MaxScale
-configured with a two masters sharded server setup. To start it, run the
-following commands in this directory.
+The MaxScale docker-compose setup contains MaxScale configured with a two masters sharded server setup. 
+
+To start it, run the following commands in this directory.
 
 ```
 docker-compose build
 docker-compose up -d
 ```
 
-After MaxScale and the servers have started (takes a few minutes), you can find
-the sharded router on port 4000. The
-user `maxuser` with the password `maxpwd` can be used to test the cluster.
+After MaxScale and the servers have started (takes a few minutes), you can find the sharded router on port 4000. 
+
+The user `maxuser` with the password `maxpwd` can be used to test the cluster.
 Assuming the mariadb client is installed on the host machine:
 ```
 $ mysql -umaxuser -pmaxpwd -h 127.0.0.1 -P 4000
@@ -47,8 +47,9 @@ $ docker-compose exec maxscale maxctrl list servers
 
 ```
 
-The cluster is configured to utilize automatic failover. To illustrate this you can stop the master
-container and watch for maxscale to failover to the other master and then show it rejoining
+The cluster is configured to utilize automatic failover. 
+
+To illustrate this you can stop the master container and watch for maxscale to failover to the other master and then show it rejoining
 after recovery:
 ```
 $ docker-compose stop master
@@ -85,6 +86,7 @@ docker-compose down -v
 
 ## Configurations made to your docker-compose.yml file
 Open your docker-compose.yml file. 
+
 Change the first service under services from:
 ```
     master:
@@ -109,6 +111,7 @@ to:
         ports:
             - "4001:3306"
 ```
+
 Change the second service from:
 ```
 
@@ -136,6 +139,7 @@ to:
         ports:
             - "4002:3306"
 ```
+
 The third service:
 ```
     slave2:
@@ -222,13 +226,18 @@ services:
             - "8989:8989"  # REST API port
 ```
 
-Next you will need to rename the folders containing your sql.
-These are located at: ```/maxscale/sql``` are named "master" and "slave" by default.
-You will want to rename these to "server1" and "server2".
+
+Next you will need to rename the folders containing your sql files.
+
+These are located at: ```/maxscale/sql``` and are named ```master``` and ```slave``` by default.
+
+You will want to rename these to ```server1``` and ```server2```.
 
 ## Configuration of your example.cnf file
-Navigate to your example.cnf file located at ```/maxscale/maxscale.cnf.d/example.cnf```
-Change the address under server1 to ```address=server1``` and the address under server2 to ```address=server2```
+Navigate to your example.cnf file located at ```/maxscale/maxscale.cnf.d/example.cnf```.
+
+Change the address under server1 to ```address=server1``` and the address under server2 to ```address=server2```.
+
 Remove server3, it will not be needed.
 
 Change MariaDB-Monitor from:
@@ -254,6 +263,7 @@ password=maxpwd
 auto_failover=true
 auto_rejoin=true
 ```
+
 Under MariaDB-Monitor, add:
 ```
 [Sharded-Service]
@@ -263,6 +273,7 @@ servers=server1,server2
 user=maxuser
 password=maxpwd
 ```
+
 Change the Read-Only-Service from:
 ```
 [Read-Only-Service]
@@ -282,6 +293,7 @@ servers=server1,server2
 user=maxuser
 password=maxpwd
 ```
+
 Change the Read-Write-Service from:
 ```
 [Read-Write-Service]
@@ -302,6 +314,7 @@ user=maxuser
 password=maxpwd
 master_failure_mode=fail_on_write
 ```
+
 Before the Read-Only-Listener and Read-Write-Listener, add:
 ```
 [Sharded-Service_Listener]
@@ -396,9 +409,12 @@ port=4006
 ```
 
 ## Connecting to MariaDB
-To connect to MariaDB, use the command ```mariadb -umaxuser -pmaxpwd -h 127.0.0.1 -P 4000```
+To connect to MariaDB, use the command ```mariadb -umaxuser -pmaxpwd -h 127.0.0.1 -P 4000```.
+
 To import a database, use the command ```source``` followed by the path to your sql file.
-For example, my command was ```source /home/masonjones103/sql-files/shard1/shard1.sql```
-To confirm the data has been imported correctly, you can use the command ```show databases;```
+
+For example, my command was ```source /home/masonjones103/sql-files/shard1/shard1.sql```.
+
+To confirm the data has been imported correctly, you can use the command ```show databases;```.
 
 
